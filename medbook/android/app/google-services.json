@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "952517542226",
+    "project_id": "medbook-454ba",
+    "storage_bucket": "medbook-454ba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952517542226:android:fb02f8bef4f5453066ba8b",
+        "android_client_info": {
+          "package_name": "com.example.medbook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "952517542226-choonpfoorksqpqrt3hp76coedpnirvn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxYiNboCt1_HRUw-RJzhuFYk0bI07JoBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "952517542226-choonpfoorksqpqrt3hp76coedpnirvn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

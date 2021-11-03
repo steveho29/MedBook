@@ -14,7 +14,10 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   MainPageController mCtrler = Get.find();
-  final passwordController = TextEditingController();
+  final currentPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,21 +43,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           child: Column(
             children: [
               PasswordFieldWidget(
-                controller: passwordController,
+                controller: currentPasswordController,
                 text: "Current Password",
               ),
               SizedBox(
                 height: 10,
               ),
               PasswordFieldWidget(
-                controller: passwordController,
+                controller: newPasswordController,
                 text: "New Password",
               ),
               SizedBox(
                 height: 10,
               ),
               PasswordFieldWidget(
-                controller: passwordController,
+                controller: confirmPasswordController,
                 text: "Confirm Password",
               ),
               SizedBox(
