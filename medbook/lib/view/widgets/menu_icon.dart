@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class MenuIcon extends StatefulWidget {
   final String name;
   var menuIcon;
-  MenuIcon({required this.name, required this.menuIcon});
+  final void Function() onClick;
+  MenuIcon({required this.name, required this.menuIcon, required this.onClick});
   @override
   _MenuIconState createState() => _MenuIconState();
 }
@@ -23,7 +24,7 @@ class _MenuIconState extends State<MenuIcon> {
               color: Theme.of(context).primaryColor,
               icon: widget.menuIcon,
               iconSize: 35,
-              onPressed: () => {}),
+              onPressed: () => widget.onClick()),
         ),
         SizedBox(height: 5),
         Text(

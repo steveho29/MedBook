@@ -3,8 +3,12 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart';
+import 'package:medbook/controller/auth_controller.dart';
+import 'package:medbook/controller/main_controller.dart';
 import 'package:medbook/view/widgets/card_with_menuicon.dart';
 import 'package:medbook/view/widgets/covid_card.dart';
 import 'package:medbook/view/widgets/covid_source_text.dart';
@@ -23,6 +27,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final AuthController authController = Get.find();
+  final MainPageController mainPageController = Get.find();
   List<String> _listImageSlider = [
     "assets/images/vinmecbanner.png",
     "assets/images/vinmecbanner.png",
@@ -139,13 +145,39 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       Spacer(),
-                      Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.white,
+                      // Container(
+                      //     decoration: BoxDecoration(
+                      //       borderRadius: BorderRadius.circular(30),
+                      //       color: Colors.white,
+                      //     ),
+                      //     child: IconButton(
+                      //         onPressed: () => {}, icon: Icon(Icons.search))),
+                      GestureDetector(
+                        onTap: () => mainPageController.setPage("Account"),
+                        child: Obx(
+                          () => Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: authController.isSignIn &&
+                                    authController.user.photoURL != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: Image.network(
+                                      authController.user.photoURL!,
+                                      fit: BoxFit.fitWidth,
+                                      width: 50,
+                                    ),
+                                  )
+                                : SvgPicture.asset(
+                                    'assets/icons/avatar.svg',
+                                    width: 50,
+                                    fit: BoxFit.fitWidth,
+                                    alignment: Alignment.center,
+                                  ),
                           ),
-                          child: IconButton(
-                              onPressed: () => {}, icon: Icon(Icons.search)))
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -178,19 +210,26 @@ class _HomePageState extends State<HomePage> {
                     mainAxisSpacing: 0,
                     children: [
                       MenuIcon(
-                          name: "Appoinment",
-                          menuIcon: Icon(Icons.calendar_today_outlined)),
+                        name: "Appoinment",
+                        menuIcon: Icon(Icons.calendar_today_outlined),
+                        onClick: () => mainPageController.setPage("Booking"),
+                      ),
                       MenuIcon(
-                          name: "Hotline",
-                          menuIcon: Icon(Icons.settings_phone)),
+                        name: "Hotline",
+                        menuIcon: Icon(Icons.settings_phone),
+                        onClick: () => {},
+                      ),
                       MenuIcon(
+                          onClick: () => {},
                           name: "Vaccine",
                           menuIcon:
                               FaIcon(FontAwesomeIcons.handHoldingMedical)),
                       MenuIcon(
+                          onClick: () => {},
                           name: "Service",
                           menuIcon: Icon(Icons.medical_services)),
                       MenuIcon(
+                          onClick: () => {},
                           name: "Donate",
                           menuIcon: FaIcon(FontAwesomeIcons.donate)),
                     ],

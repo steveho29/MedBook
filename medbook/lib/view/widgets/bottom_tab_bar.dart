@@ -38,7 +38,7 @@ class BottomTabBar extends GetWidget {
                 )),
             buildTabItem(
                 changePageCallBack: mainController.setPage,
-                page: "Profile",
+                page: "Activity",
                 icon: Icon(Icons.contact_page_outlined)),
             Opacity(
                 opacity: 0,

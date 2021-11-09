@@ -54,7 +54,7 @@ class _DropUpBoxState extends State<DropUpBox> {
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                     child: Text(
-                      widget.controller.currentSelection.value,
+                      widget.controller.currentSelection,
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                     ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:medbook/controller/auth_controller.dart';
 import 'package:medbook/controller/main_controller.dart';
+import 'package:medbook/view/screens/login_page.dart';
 import 'package:medbook/view/widgets/news_card.dart';
 import 'package:medbook/view/widgets/setting_row.dart';
 import 'package:medbook/view/widgets/title_with_button.dart';
@@ -33,6 +35,7 @@ class AccountPage extends StatelessWidget {
   Widget build(BuildContext context) {
     double sectionPadding = 20;
     MainPageController mCtrler = Get.find();
+    AuthController authController = Get.find();
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -66,21 +69,41 @@ class AccountPage extends StatelessWidget {
                         children: <Widget>[
                           Container(
                             padding: EdgeInsets.only(top: 30),
-                            child: SvgPicture.asset(
-                              'assets/icons/avatar.svg',
-                              width: 100,
-                              fit: BoxFit.fitWidth,
-                              alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Obx(
+                              () => authController.isSignIn &&
+                                      authController.user.photoURL != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child: Image.network(
+                                        authController.user.photoURL!,
+                                        fit: BoxFit.fitWidth,
+                                      ),
+                                    )
+                                  : SvgPicture.asset(
+                                      'assets/icons/avatar.svg',
+                                      width: 100,
+                                      fit: BoxFit.fitWidth,
+                                      alignment: Alignment.center,
+                                    ),
                             ),
                           ),
                           Padding(
                             padding: EdgeInsets.only(top: 20),
-                            child: Text(
-                              "Ho Ngoc Minh Duc",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green.shade400,
+                            child: Obx(
+                              () => Text(
+                                authController.isSignIn
+                                    ? authController.user.displayName != null
+                                        ? authController.user.displayName!
+                                        : authController.user.email!
+                                    : "Not sign in",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green.shade400,
+                                ),
                               ),
                             ),
                           ),
@@ -154,14 +177,12 @@ class AccountPage extends StatelessWidget {
                 SizedBox(height: 20),
                 Column(
                   children: [
-                    GestureDetector(
-                      onTap: () => mCtrler.setPage("ChangePassword"),
-                      child: SettingRow(
-                        text: "Change password",
-                        subText: "",
-                        color: Theme.of(context).primaryColor,
-                        icon: Icons.lock,
-                      ),
+                    SettingRow(
+                      text: "Change password",
+                      subText: "",
+                      color: Theme.of(context).primaryColor,
+                      icon: Icons.lock,
+                      onClick: () => mCtrler.setPage("ChangePassword"),
                     ),
                     SizedBox(height: 15),
                     SettingRow(
@@ -169,6 +190,7 @@ class AccountPage extends StatelessWidget {
                       subText: "English",
                       color: Colors.red,
                       icon: Icons.language,
+                      onClick: () => {},
                     ),
                     SizedBox(height: 15),
                     SettingRow(
@@ -176,6 +198,7 @@ class AccountPage extends StatelessWidget {
                       subText: "Not enabled",
                       color: Colors.blue,
                       icon: Icons.security,
+                      onClick: () => {},
                     ),
                   ],
                 ),
@@ -214,6 +237,7 @@ class AccountPage extends StatelessWidget {
                       subText: "",
                       color: Colors.blue,
                       icon: Icons.menu_book,
+                      onClick: () => {},
                     ),
                     SizedBox(height: 15),
                     SettingRow(
@@ -221,13 +245,16 @@ class AccountPage extends StatelessWidget {
                       subText: "",
                       color: Theme.of(context).primaryColor,
                       icon: Icons.warning_rounded,
+                      onClick: () => {},
                     ),
                     SizedBox(height: 15),
                     SettingRow(
-                        text: "Private Policy",
-                        subText: "",
-                        color: Colors.red,
-                        icon: Icons.privacy_tip_sharp),
+                      text: "Private Policy",
+                      subText: "",
+                      color: Colors.red,
+                      icon: Icons.privacy_tip_sharp,
+                      onClick: () => {},
+                    ),
                   ],
                 ),
               ],
@@ -255,12 +282,13 @@ class AccountPage extends StatelessWidget {
               subText: "",
               color: Colors.grey.shade800,
               icon: Icons.question_answer,
+              onClick: () => {},
             ),
           ),
 
           SizedBox(height: sectionPadding),
 
-          // ------- LOG OUT ------
+          // ------- LOG IN/OUT ------
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -276,11 +304,16 @@ class AccountPage extends StatelessWidget {
               ],
             ),
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: SettingRow(
-              text: "Log out",
-              subText: "",
-              color: Colors.red,
-              icon: Icons.logout,
+            child: Obx(
+              () => SettingRow(
+                text: authController.isSignIn ? "Log out" : "Log in",
+                subText: "",
+                color: authController.isSignIn ? Colors.red : Colors.orange,
+                icon: authController.isSignIn ? Icons.logout : Icons.login,
+                onClick: () => authController.isSignIn
+                    ? authController.signOut()
+                    : Get.to(() => LoginPage()),
+              ),
             ),
           ),
           SizedBox(height: sectionPadding),

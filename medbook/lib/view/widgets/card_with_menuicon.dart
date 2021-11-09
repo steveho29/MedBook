@@ -31,6 +31,7 @@ class _CardWithMenuIconState extends State<CardWithMenuIcon> {
         ],
       ),
       child: MenuIcon(
+        onClick: () => {},
         menuIcon: widget.menuIcon,
         name: widget.name,
       ),
