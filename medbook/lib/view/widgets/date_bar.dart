@@ -1,5 +1,6 @@
-import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
+
+import 'date_picker_widget_custom.dart';
 
 class DateBar extends StatefulWidget {
   final void Function(DateTime) dateChanged;
@@ -7,7 +8,11 @@ class DateBar extends StatefulWidget {
   List<int>? inactiveWeekday;
   List<DateTime>? inactiveDay;
   List<DateTime>? exceptDay;
-  DateBar({required this.dateChanged, this.inactiveWeekday, this.inactiveDay, this.exceptDay});
+  DateBar(
+      {required this.dateChanged,
+      this.inactiveWeekday,
+      this.inactiveDay,
+      this.exceptDay});
   @override
   _DateBarState createState() => _DateBarState();
 }
