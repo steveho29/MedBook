@@ -107,7 +107,7 @@ class _BookingPageState extends State<BookingPage> {
       try {
         int index = timeController.currentSelection.indexOf(':');
         int hour =
-            int.parse(timeController.currentSelection.substring(0, index - 1));
+            int.parse(timeController.currentSelection.substring(0, index));
         int minute =
             int.parse(timeController.currentSelection.substring(index + 1));
         Timestamp timestamp = Timestamp.fromDate(DateTime(
@@ -119,7 +119,7 @@ class _BookingPageState extends State<BookingPage> {
           // widget.time.hour,
           // widget.time.minute
         ));
-        // print(timestamp.toDate());
+        print(timestamp.toDate());
         firestoreController.makeAppoinment(
           Appointment(
             userId: authController.user.uid,
@@ -129,6 +129,7 @@ class _BookingPageState extends State<BookingPage> {
           ),
         );
       } catch (error) {
+        print(error);
         Get.snackbar(
           "Booking",
           "Incomplete",
@@ -195,7 +196,7 @@ class _BookingPageState extends State<BookingPage> {
                 isShowButton: false,
               ),
               Obx(
-                () => DropUpBox(
+                () => PopUpBox(
                   controller: locationController,
                   text: "Location",
                   selectionList: _listHospital.value.keys.toList(),
@@ -207,7 +208,7 @@ class _BookingPageState extends State<BookingPage> {
                 isShowButton: false,
               ),
               Obx(
-                () => DropUpBox(
+                () => PopUpBox(
                   controller: hospitalController,
                   text: "Hospital",
                   selectionList: listHospital.map((e) => e.name).toList(),
@@ -215,7 +216,7 @@ class _BookingPageState extends State<BookingPage> {
                 ),
               ),
               Obx(
-                () => DropUpBox(
+                () => PopUpBox(
                   controller: specialityController,
                   text: "Speciality",
                   selectionList: doctors.map((e) => e.speciality).toList(),
@@ -223,7 +224,7 @@ class _BookingPageState extends State<BookingPage> {
                 ),
               ),
               Obx(
-                () => DropUpBox(
+                () => PopUpBox(
                   controller: doctorController,
                   text: "Doctor",
                   selectionList: listDoctor
@@ -243,7 +244,7 @@ class _BookingPageState extends State<BookingPage> {
                     inactiveDay: doctor != null ? doctor!.inactiveday : null,
                     exceptDay: doctor != null ? doctor!.acctiveExceptDay : null,
                   )),
-              Obx(() => DropUpBox(
+              Obx(() => PopUpBox(
                   selectionList: availableTime,
                   text: "Available Time",
                   controller: timeController,

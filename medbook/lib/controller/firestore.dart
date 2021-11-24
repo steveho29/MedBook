@@ -39,43 +39,36 @@ class FirestoreController extends GetxController {
         FirebaseFirestore.instance.collection('appointments');
     CollectionReference userAppointments = FirebaseFirestore.instance
         .collection('users/${appointment.userId}/appointments');
+    CollectionReference doctorAppointments = FirebaseFirestore.instance
+        .collection('doctors/${appointment.doctorId}/appointments');
     //
-    await appoinments
-        .add(appointment.toJson())
-        .then((value) => {
-              userAppointments.add({'reference': value})
-            })
-        .then((value) => Get.to(() => BookingSuccessPage()));
+    await appoinments.add(appointment.toJson()).then((value) {
+      userAppointments.add({'reference': value});
+      doctorAppointments.add({'reference': value});
+    }).then((value) => Get.to(() => BookingSuccessPage()));
   }
 
   Future<Map<String, Appointment>> getAppoinments() async {
     AuthController authController = Get.find();
+    String user = authController.isDoctor ? "doctors" : "users";
     CollectionReference userAppointments = FirebaseFirestore.instance
-        .collection('users/${authController.user.uid}/appointments');
-    Map<String, Appointment> appoinments = <String, Appointment>{
-      // '1': Appointment(
-      //     doctorId: '1',
-      //     userId: '1',
-      //     time: Timestamp.now(),
-      //     status: "Incoming",
-      //     reason: "")
-    };
+        .collection('${user}/${authController.user.uid}/appointments');
+    Map<String, Appointment> appoinments = <String, Appointment>{};
     await userAppointments
-        // .orderBy('time')
         .get()
-        .then((QuerySnapshot snapshot) => snapshot.docs.forEach((element) => {
-              (element.data() as Map<String, dynamic>)['reference']
+        .then((QuerySnapshot snapshot) => snapshot.docs.forEach((element) {
+              ((element.data() as Map<String, dynamic>)['reference'])
                   .get()
                   .then((DocumentSnapshot snapshot) {
                 appoinments.addAll({
                   snapshot.id: Appointment.fromJson(
                       snapshot.data() as Map<String, dynamic>),
                 });
-                // print(snapshot.data());
-              })
+              });
             }));
-    // return {};
     return appoinments;
+
+    // return appoinments;
   }
 
   Future<Map<String, List<Hospital>>> getHospitals() async {
@@ -93,7 +86,6 @@ class FirestoreController extends GetxController {
               (data['doctors'] as List<dynamic>)
                   .forEach((x) => doctors.add(x.path));
               data['doctors'] = doctors;
-
               listHospital.add(Hospital.fromJson(data));
             }));
     final releaseHospitals = listHospital.groupBy<String>((m) => m.city);
@@ -140,8 +132,30 @@ class FirestoreController extends GetxController {
     //   print("getdoctor");
     //   print(error);
     // }
-    await getHospitals();
-    print(listDoctors[0]);
+    // await getHospitals();
+    // print(listDoctors[0]);
     return listDoctors;
   }
+
+  Future<Doctor?> isDoctor() async {
+    AuthController authController = Get.find();
+    if (authController.isSignIn == false) return null;
+    CollectionReference doctors =
+        FirebaseFirestore.instance.collection('doctors');
+    Doctor? target = null;
+    print(authController.user.uid);
+    await doctors.get().then((QuerySnapshot snapshot) => snapshot.docs
+            .where((element) => (element.id == authController.user.uid))
+            .forEach((e) {
+          Map<String, dynamic> data = e.data() as Map<String, dynamic>;
+          data['id'] = e.id;
+          print(e.id);
+          target = Doctor.fromJson(data);
+        }));
+
+    return target;
+  }
 }
+
+
+// Check if user is doctor

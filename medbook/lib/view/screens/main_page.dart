@@ -16,8 +16,8 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   final MainPageController mainController = Get.put(MainPageController());
-  final FirestoreController firestoreController =
-      Get.put(FirestoreController());
+  // final FirestoreController firestoreController =
+  //     Get.put(FirestoreController());
   // final FirestoreController t = Get.put(FirestoreController());
   final AuthController authController = Get.find();
   @override

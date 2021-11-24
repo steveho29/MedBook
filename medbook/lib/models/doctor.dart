@@ -35,6 +35,16 @@ class Doctor {
           .map((e) => e.key ).toList())
       : null;
   
+  List<String> availableTime (DateTime date) {
+      if (exceptDay != null &&
+          exceptDay!.containsKey(date)) {
+        return exceptDay![date]!;
+      }
+      if (exceptWeekday != null &&
+          exceptWeekday!.containsKey(date.weekday))
+        return exceptWeekday![date.weekday]!;
+      return daily.map((e) => e.toString()).toList();
+  }
   void f() {
     // Map<dynamic, dynamic> json = {};
 

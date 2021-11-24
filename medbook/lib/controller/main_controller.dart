@@ -4,6 +4,7 @@ import 'package:medbook/controller/auth_controller.dart';
 import 'package:medbook/view/screens/account_page.dart';
 import 'package:medbook/view/screens/activity.dart';
 import 'package:medbook/view/screens/booking_page.dart';
+import 'package:medbook/view/screens/doctor_activity_page.dart';
 import 'package:medbook/view/screens/home_page.dart';
 import 'package:medbook/view/screens/login_page.dart';
 import 'package:medbook/view/screens/register_page.dart';
@@ -19,6 +20,13 @@ class MainPageController extends GetxController {
     "Booking": BookingPage(),
     "Activity": ActivityPage(),
   };
+
+  @override
+  void onReady() {
+    // TODO: implement onReady
+    super.onReady();
+  }
+
   var _currentPage = "Home".obs;
   var _prevPage = "Home";
   String get currentPage => _currentPage.value;
@@ -82,6 +90,11 @@ class MainPageController extends GetxController {
     //   );
     // }
     else {
+      if (page == "Activity") if (authController.isDoctor)
+        _pages["Activity"] = DoctorActivityPage();
+      else
+        _pages["Activity"] = ActivityPage();
+
       _prevPage = _currentPage.value;
       _currentPage.value = page;
     }

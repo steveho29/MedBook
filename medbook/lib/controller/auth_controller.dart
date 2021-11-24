@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:medbook/controller/firestore.dart';
+import 'package:medbook/models/doctor.dart';
 import 'package:medbook/view/screens/home_page.dart';
 import 'package:medbook/view/screens/login_page.dart';
 import 'package:medbook/view/screens/main_page.dart';
@@ -13,7 +14,10 @@ class AuthController extends GetxController {
   // GoogleSignInAccount get user => _user!;
   Rx<User?> _user = Rx(null);
   FirebaseAuth auth = FirebaseAuth.instance;
+  FirestoreController firestoreController = Get.put(FirestoreController());
+  Rx<Doctor?> doctor = Rx(null);
 
+  bool get isDoctor => doctor.value != null;
   bool get isSignIn => _user.value != null;
   User get user => _user.value!;
   @override
@@ -23,6 +27,11 @@ class AuthController extends GetxController {
     _user = Rx<User?>(auth.currentUser);
     _user.bindStream(auth.userChanges());
     ever(_user, userChanges);
+    checkUserIsDoctor();
+  }
+
+  void checkUserIsDoctor() async {
+    doctor.value = await firestoreController.isDoctor();
   }
 
   userChanges(User? user) {
@@ -46,6 +55,7 @@ class AuthController extends GetxController {
 
       await auth.signInWithCredential(credential);
       Get.to(() => MainPage());
+      checkUserIsDoctor();
     } catch (error) {
       Get.snackbar(
         "Sign in",
@@ -64,6 +74,7 @@ class AuthController extends GetxController {
   void signOut() async {
     GoogleSignIn().signOut();
     await auth.signOut();
+    this.doctor.value = null;
     // print(user);
   }
 
@@ -99,6 +110,7 @@ class AuthController extends GetxController {
       await auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((value) => Get.to(() => MainPage()));
+      checkUserIsDoctor();
     } catch (error) {
       Get.snackbar(
         "Sign in",

@@ -3,23 +3,24 @@ import 'package:get/get.dart';
 import 'package:medbook/controller/selection_controller.dart';
 import 'package:medbook/view/widgets/selection_bottom_sheet.dart';
 
-class DropUpBox extends StatefulWidget {
+// ignore: must_be_immutable
+class PopUpBox extends StatefulWidget {
   final List<String> selectionList;
   final String text;
   final SelectionController controller;
   final bool isRequired;
   var icon;
-  DropUpBox(
+  PopUpBox(
       {required this.selectionList,
       required this.text,
       required this.controller,
       required this.icon,
       this.isRequired = false});
   @override
-  _DropUpBoxState createState() => _DropUpBoxState();
+  _PopUpBoxState createState() => _PopUpBoxState();
 }
 
-class _DropUpBoxState extends State<DropUpBox> {
+class _PopUpBoxState extends State<PopUpBox> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

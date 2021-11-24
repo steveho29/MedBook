@@ -26,7 +26,6 @@ class _ActivityPageState extends State<ActivityPage> {
   // RxMap<String, Doctor> _listDoctor = <String, Doctor>{}.obs;
   // Map<String, Doctor> get listDoctor => _listDoctor.value;
 
-  RxBool _isIncoming = true.obs;
   bool isIncoming = true;
   Map<String, Appointment> x = {};
   Map<String, Doctor> d = {};
@@ -64,8 +63,6 @@ class _ActivityPageState extends State<ActivityPage> {
 
   @override
   Widget build(BuildContext context) {
-    var localizations = MaterialLocalizations.of(context);
-
     return SingleChildScrollView(
       child: Container(
         child: Column(
