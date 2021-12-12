@@ -6,7 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:medbook/controller/auth_controller.dart';
-import 'package:medbook/controller/firestore.dart';
+import 'package:medbook/controller/firestore_controller.dart';
 import 'package:medbook/models/appoinment.dart';
 import 'package:medbook/models/doctor.dart';
 import 'package:medbook/view/widgets/news_card.dart';

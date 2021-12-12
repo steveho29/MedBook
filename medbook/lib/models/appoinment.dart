@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:medbook/models/prescription.dart';
 
 class Appointment {
-  final String userId, doctorId, reason, status;
+  final String userId, doctorId, reason, status, id;
   final Timestamp time;
+  List<Presciption> prescriptions = [];
   Appointment(
       {required this.userId,
       required this.doctorId,
       required this.time,
       required this.reason,
+      required this.id,
       this.status = "Incoming"});
 
   Appointment.fromJson(Map<String, dynamic> json)
@@ -15,7 +18,14 @@ class Appointment {
         doctorId = json['doctorId'],
         time = json['time'],
         reason = json['reason'],
-        status = json['status'];
+        status = json['status'],
+        prescriptions = json.containsKey('prescription')
+            ? (json['prescription'] as List<dynamic>).map((e) {
+                return Presciption(
+                    name: e['name'], dose: e['dose'], note: e['note']);
+              }).toList()
+            : [],
+        id = json['id'];
 
   Map<String, dynamic> toJson() => {
         'userId': this.userId,

@@ -31,13 +31,13 @@ class BottomTabBar extends GetWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             buildTabItem(
-                changePageCallBack: mainController.setPage,
+                changePageCallBack: mainController.goToPage,
                 page: "Home",
                 icon: Icon(
                   Icons.home,
                 )),
             buildTabItem(
-                changePageCallBack: mainController.setPage,
+                changePageCallBack: mainController.goToPage,
                 page: "Activity",
                 icon: Icon(Icons.contact_page_outlined)),
             Opacity(
@@ -48,14 +48,14 @@ class BottomTabBar extends GetWidget {
                 )),
             // Spacer(),
             buildTabItem(
-                changePageCallBack: mainController.setPage,
+                changePageCallBack: mainController.goToPage,
                 page: "Notification",
                 icon: Icon(
                   Icons.notifications,
                   semanticLabel: "Notification",
                 )),
             buildTabItem(
-                changePageCallBack: mainController.setPage,
+                changePageCallBack: mainController.goToPage,
                 page: "Account",
                 icon: Icon(Icons.account_circle)),
           ],

@@ -1,12 +1,10 @@
 // import 'dart:html';
 
-import 'package:badges/badges.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 import 'package:medbook/controller/auth_controller.dart';
 import 'package:medbook/controller/main_controller.dart';
 import 'package:medbook/view/widgets/card_with_menuicon.dart';
@@ -90,12 +88,6 @@ class _HomePageState extends State<HomePage> {
       "time": "29/10/2001",
       "imageLink": "https://vnn-imgs-f.vgcloud.vn/2021/10/27/09/bitcoin-1.jpg",
     },
-    {
-      "title": "Vy khung",
-      "time": "29/10/2001",
-      "imageLink":
-          "https://scontent.fsgn4-1.fna.fbcdn.net/v/t1.6435-9/83190275_2535404480052298_8389724558352973824_n.jpg?_nc_cat=103&ccb=1-5&_nc_sid=174925&_nc_ohc=1wZOzYV9UywAX9eZJnT&_nc_ht=scontent.fsgn4-1.fna&oh=a719726df0a29c9b5076dfcaf90c3f0c&oe=619FD1D7",
-    },
   ];
   @override
   Widget build(BuildContext context) {
@@ -153,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                       //     child: IconButton(
                       //         onPressed: () => {}, icon: Icon(Icons.search))),
                       GestureDetector(
-                        onTap: () => mainPageController.setPage("Account"),
+                        onTap: () => mainPageController.goToPage("Account"),
                         child: Obx(
                           () => Container(
                             decoration: BoxDecoration(
@@ -212,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                       MenuIcon(
                         name: "Appoinment",
                         menuIcon: Icon(Icons.calendar_today_outlined),
-                        onClick: () => mainPageController.setPage("Booking"),
+                        onClick: () => mainPageController.goToPage("Booking"),
                       ),
                       MenuIcon(
                         name: "Hotline",
@@ -296,10 +288,14 @@ class _HomePageState extends State<HomePage> {
 
                 Column(
                   children: _newsData
-                      .map((e) => NewsCard(
+                      .map(
+                        (e) => NewsCard(
                           title: e["title"]!,
                           time: e["time"]!,
-                          imageLink: e["imageLink"]!))
+                          imageLink: e["imageLink"]!,
+                          content: "aa",
+                        ),
+                      )
                       .toList(),
                 ),
                 SizedBox(height: 20),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:medbook/controller/auth_controller.dart';
-import 'package:medbook/controller/firestore.dart';
+import 'package:medbook/controller/firestore_controller.dart';
 import 'package:medbook/controller/main_controller.dart';
 import 'package:medbook/controller/selection_controller.dart';
 import 'package:medbook/models/appoinment.dart';
@@ -24,6 +24,9 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
+  FirestoreController firestoreController = Get.find();
+  AuthController authController = Get.find();
+
   DateTime get currentDate => widget._currentDate.value;
 
   SelectionController doctorController =
@@ -43,9 +46,6 @@ class _BookingPageState extends State<BookingPage> {
   void clearSelection() {
     doctorController.setSelection("");
   }
-
-  FirestoreController firestoreController = Get.find();
-  AuthController authController = Get.find();
 
   // List<String> listLocations = ["Sài Gòn", "Hà Nội", "Đà Nẵng"];
   // List<String> listHospitals = ["Hospital 1", "Hospital 2", "Hospital 3"];
@@ -120,12 +120,13 @@ class _BookingPageState extends State<BookingPage> {
           // widget.time.minute
         ));
         print(timestamp.toDate());
-        firestoreController.makeAppoinment(
+        firestoreController.makeAppointment(
           Appointment(
             userId: authController.user.uid,
             doctorId: doctor!.id,
             time: timestamp,
             reason: reasonController.text,
+            id: "",
           ),
         );
       } catch (error) {

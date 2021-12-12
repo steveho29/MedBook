@@ -2,11 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:medbook/controller/firestore.dart';
-import 'package:medbook/controller/auth_controller.dart';
 import 'package:medbook/controller/main_controller.dart';
-import 'package:medbook/view/screens/booking_success_page.dart';
-import 'package:medbook/view/screens/login_page.dart';
 import 'package:medbook/view/widgets/bottom_tab_bar.dart';
 
 class MainPage extends StatefulWidget {
@@ -16,26 +12,16 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   final MainPageController mainController = Get.put(MainPageController());
-  // final FirestoreController firestoreController =
-  //     Get.put(FirestoreController());
-  // final FirestoreController t = Get.put(FirestoreController());
-  final AuthController authController = Get.find();
   @override
   Widget build(BuildContext context) {
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom != 0;
-    return
-        // Obx(
-        //   () =>
-        // mainController.currentPage != "Login"
-        //     ? BookingPage()
-        //     :
-        Scaffold(
+    return Scaffold(
       bottomNavigationBar: BottomTabBar(),
       floatingActionButton: isKeyboardOpen
           ? null
           : FloatingActionButton(
               backgroundColor: Theme.of(context).primaryColor,
-              onPressed: () => mainController.setPage("Booking"),
+              onPressed: () => mainController.goToPage("Booking"),
               child: Icon(Icons.calendar_today)),
       floatingActionButtonLocation:
           // FixedCenterDockedFabLocation(context: context),

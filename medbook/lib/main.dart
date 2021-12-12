@@ -3,13 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:medbook/controller/auth_controller.dart';
+import 'package:medbook/controller/firestore_controller.dart';
 import 'package:medbook/view/screens/booking_success_page.dart';
 
 import 'view/screens/main_page.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp().then((value) => Get.put(AuthController()));
+  await Firebase.initializeApp().then((value) => Get.put(AuthController())).then((value) => Get.put(FirestoreController()));
   runApp(GetMaterialApp(
     home: MainPage(),
     debugShowCheckedModeBanner: false,

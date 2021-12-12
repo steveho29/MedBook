@@ -3,12 +3,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:medbook/controller/auth_controller.dart';
-import 'package:medbook/controller/firestore.dart';
+import 'package:medbook/controller/firestore_controller.dart';
 import 'package:medbook/controller/selection_controller.dart';
 import 'package:medbook/models/appoinment.dart';
-import 'package:medbook/view/widgets/BigButtonWidget.dart';
+import 'package:medbook/models/prescription.dart';
 import 'package:medbook/view/widgets/dropup_box.dart';
-import 'package:medbook/view/widgets/title_with_button.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class AppointmentPage extends StatefulWidget {
@@ -31,16 +30,17 @@ class _AppointmentPageState extends State<AppointmentPage> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now().add(Duration(days: 7));
+
   List<Map<String, dynamic>> listPill = [
-    {
-      'name': 'Panadol',
-      'dose': '1 sang|1 trua|1 toi',
-      'note': 'Uong sau bua an',
-      'color': Colors.red.shade50,
-      'pillColor': Colors.red.shade300,
-    }
+    // {
+    //   'name': 'Panadol',
+    //   'dose': '1 Breakfast|1 Lunch|1 Dinner',
+    //   'note': 'After meal',
+    //   'color': Colors.red.shade50,
+    //   'pillColor': Colors.red.shade300,
+    // }
   ];
-  int pillColorIdx = 0;
+  int get pillColorIdx => listPill.length % pillColors.length;
   List<Map<String, Color>> pillColors = [
     {
       'color': Colors.red.shade50,
@@ -59,8 +59,30 @@ class _AppointmentPageState extends State<AppointmentPage> {
       'pillColor': Colors.grey.shade300,
     },
   ];
+  void update() {
+    List<Presciption> prescriptions = [];
+    listPill.forEach((element) {
+      prescriptions.add(new Presciption(
+          name: element['name'], dose: element['dose'], note: element['note']));
+    });
+    widget.appointment.prescriptions = prescriptions;
+    firestoreController.updateAppointment(widget.appointment);
+  }
+  
   @override
   Widget build(BuildContext context) {
+    this.setState(() {
+      listPill.addAll(widget.appointment.prescriptions
+          .map((e) => {
+                'name': e.name,
+                'dose': e.dose,
+                'note': e.note,
+                'color': pillColors[pillColorIdx]['color'],
+                'pillColor': pillColors[pillColorIdx]['color']
+              })
+          .toList());
+    });
+    print(widget.appointment.prescriptions.length);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -131,7 +153,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                         )),
                   ),
                   Obx(() => PopUpBox(
-                      selectionList: authController.doctor!.value!
+                      selectionList: authController.doctor.value!
                           .availableTime(_selectedDay),
                       text: "Available Time",
                       controller: timeSelectionController,
@@ -258,10 +280,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                               });
                                             });
                                             Navigator.pop(context);
-                                            pillColorIdx ==
-                                                    pillColors.length - 1
-                                                ? pillColorIdx = 0
-                                                : pillColorIdx += 1;
                                           },
                                           child: Text("Add",
                                               style: TextStyle(fontSize: 20)),
@@ -309,7 +327,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => {},
+                    onPressed: () => update(),
                     child: Text(
                       "Confirm",
                       style: TextStyle(fontSize: 20),

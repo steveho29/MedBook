@@ -134,9 +134,11 @@ class AccountPage extends StatelessWidget {
                                         padding:
                                             const EdgeInsets.only(right: 10),
                                         child: NewsCard(
-                                            title: e["title"]!,
-                                            time: e["time"]!,
-                                            imageLink: e["imageLink"]!),
+                                          title: e["title"]!,
+                                          time: e["time"]!,
+                                          imageLink: e["imageLink"]!,
+                                          content: "",
+                                        ),
                                       ))
                                   .toList(),
                             ),
@@ -182,7 +184,7 @@ class AccountPage extends StatelessWidget {
                       subText: "",
                       color: Theme.of(context).primaryColor,
                       icon: Icons.lock,
-                      onClick: () => mCtrler.setPage("ChangePassword"),
+                      onClick: () => mCtrler.goToPage("ChangePassword"),
                     ),
                     SizedBox(height: 15),
                     SettingRow(

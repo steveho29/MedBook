@@ -14,7 +14,7 @@ class BookingSuccessPage extends StatefulWidget {
 class _BookingSuccessPageState extends State<BookingSuccessPage> {
   MainPageController mainPageController = Get.find();
   void close() {
-    mainPageController.setPage("Activity");
+    mainPageController.goToPage("Activity");
     Get.to(() => MainPage());
   }
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:medbook/controller/firestore.dart';
+import 'package:medbook/controller/firestore_controller.dart';
 import 'package:medbook/models/doctor.dart';
 import 'package:medbook/view/screens/home_page.dart';
 import 'package:medbook/view/screens/login_page.dart';
@@ -14,7 +14,7 @@ class AuthController extends GetxController {
   // GoogleSignInAccount get user => _user!;
   Rx<User?> _user = Rx(null);
   FirebaseAuth auth = FirebaseAuth.instance;
-  FirestoreController firestoreController = Get.put(FirestoreController());
+  // FirestoreController firestoreController = Get.put(FirestoreController());
   Rx<Doctor?> doctor = Rx(null);
 
   bool get isDoctor => doctor.value != null;
@@ -31,7 +31,8 @@ class AuthController extends GetxController {
   }
 
   void checkUserIsDoctor() async {
-    doctor.value = await firestoreController.isDoctor();
+    FirestoreController firestoreController = Get.find();
+    doctor.value = await firestoreController.getDoctorByUid();
   }
 
   userChanges(User? user) {

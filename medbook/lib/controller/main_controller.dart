@@ -32,7 +32,7 @@ class MainPageController extends GetxController {
   String get currentPage => _currentPage.value;
   Widget? get currentPageWidget => _pages[_currentPage];
 
-  void setPage(String page) {
+  void goToPage(String page) {
     if ((page == "Booking" || page == "Activity") && !authController.isSignIn) {
       Get.defaultDialog(
         title: "Sign in to use this feature",
