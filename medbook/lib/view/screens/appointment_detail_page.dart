@@ -12,25 +12,6 @@ import 'package:table_calendar/table_calendar.dart';
 
 class AppointmentPage extends StatefulWidget {
   final Appointment appointment;
-  AppointmentPage({required this.appointment});
-
-  @override
-  _AppointmentPageState createState() => _AppointmentPageState();
-}
-
-class _AppointmentPageState extends State<AppointmentPage> {
-  TextEditingController nameTextController = TextEditingController();
-  TextEditingController doseTextController = TextEditingController();
-  TextEditingController noteTextController = TextEditingController();
-  SelectionController timeSelectionController =
-      SelectionController(callBack: () => {});
-
-  FirestoreController firestoreController = Get.find();
-  AuthController authController = Get.find();
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
-  DateTime _selectedDay = DateTime.now().add(Duration(days: 7));
-
   List<Map<String, dynamic>> listPill = [
     // {
     //   'name': 'Panadol',
@@ -41,6 +22,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
     // }
   ];
   int get pillColorIdx => listPill.length % pillColors.length;
+
   List<Map<String, Color>> pillColors = [
     {
       'color': Colors.red.shade50,
@@ -59,30 +41,73 @@ class _AppointmentPageState extends State<AppointmentPage> {
       'pillColor': Colors.grey.shade300,
     },
   ];
+  AppointmentPage({required this.appointment}) {
+    appointment.prescriptions.forEach((e) {
+      listPill.add({
+        'name': e.name,
+        'dose': e.dose,
+        'note': e.note,
+        'color': pillColors[pillColorIdx]['color'],
+        'pillColor': pillColors[pillColorIdx]['pillColor']
+      });
+    });
+    // listPill.addAll(appointment.prescriptions
+    //     .map((e) => {
+    //           'name': e.name,
+    //           'dose': e.dose,
+    //           'note': e.note,
+    //           'color': pillColors[pillColorIdx]['color'],
+    //           'pillColor': pillColors[pillColorIdx]['pillColor']
+    //         })
+    //     .toList());
+  }
+  @override
+  _AppointmentPageState createState() => _AppointmentPageState();
+}
+
+class _AppointmentPageState extends State<AppointmentPage> {
+  TextEditingController nameTextController = TextEditingController();
+  TextEditingController doseTextController = TextEditingController();
+  TextEditingController noteTextController = TextEditingController();
+  TextEditingController diseaseTextController = TextEditingController();
+  SelectionController timeSelectionController =
+      SelectionController(callBack: () => {});
+
+  FirestoreController firestoreController = Get.find();
+  AuthController authController = Get.find();
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  DateTime _focusedDay = DateTime.now();
+  DateTime _selectedDay = DateTime.now().add(Duration(days: 7));
+
   void update() {
     List<Presciption> prescriptions = [];
-    listPill.forEach((element) {
+    widget.listPill.forEach((element) {
       prescriptions.add(new Presciption(
           name: element['name'], dose: element['dose'], note: element['note']));
     });
     widget.appointment.prescriptions = prescriptions;
+    // widget.appointment.reason = TextController.text;
     firestoreController.updateAppointment(widget.appointment);
+    Get.snackbar(
+      "Appointment",
+      "Appointment",
+      backgroundColor: Colors.green,
+      snackPosition: SnackPosition.BOTTOM,
+      titleText: Text(
+        "Update Successfully",
+        style: TextStyle(color: Colors.white),
+      ),
+    );
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    this.setState(() {
-      listPill.addAll(widget.appointment.prescriptions
-          .map((e) => {
-                'name': e.name,
-                'dose': e.dose,
-                'note': e.note,
-                'color': pillColors[pillColorIdx]['color'],
-                'pillColor': pillColors[pillColorIdx]['color']
-              })
-          .toList());
-    });
+    diseaseTextController.text = widget.appointment.reason;
+    print(widget.appointment.reason);
     print(widget.appointment.prescriptions.length);
+    diseaseTextController.addListener(() {
+      widget.appointment.reason = diseaseTextController.text;
+    });
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -152,12 +177,13 @@ class _AppointmentPageState extends State<AppointmentPage> {
                           fontWeight: FontWeight.bold,
                         )),
                   ),
-                  Obx(() => PopUpBox(
-                      selectionList: authController.doctor.value!
-                          .availableTime(_selectedDay),
-                      text: "Available Time",
-                      controller: timeSelectionController,
-                      icon: FaIcon(FontAwesomeIcons.clock))),
+                  if (authController.isDoctor)
+                    Obx(() => PopUpBox(
+                        selectionList: authController.doctor.value!
+                            .availableTime(_selectedDay),
+                        text: "Available Time",
+                        controller: timeSelectionController,
+                        icon: FaIcon(FontAwesomeIcons.clock))),
                   Row(
                     children: [
                       Padding(
@@ -169,136 +195,142 @@ class _AppointmentPageState extends State<AppointmentPage> {
                             )),
                       ),
                       Spacer(),
-                      IconButton(
-                          onPressed: () => {
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(30),
-                                  )),
-                                  builder: (context) => Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.8,
-                                    padding: EdgeInsets.all(30),
-                                    child: ListView(
-                                      children: [
-                                        SizedBox(height: 20),
-                                        Text(
-                                          "Add new medicine",
-                                          style: TextStyle(
-                                              fontSize: 30,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(height: 20),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            "Name",
+                      if (authController.isDoctor)
+                        IconButton(
+                            onPressed: () => {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(30),
+                                    )),
+                                    builder: (context) => Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.8,
+                                      padding: EdgeInsets.all(30),
+                                      child: ListView(
+                                        children: [
+                                          SizedBox(height: 20),
+                                          Text(
+                                            "Add new medicine",
                                             style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 20,
+                                                fontSize: 30,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          SizedBox(height: 20),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "Name",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 20,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        TextField(
-                                          controller: nameTextController,
-                                          decoration: InputDecoration(
-                                            hintText: 'Name',
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            // prefixIcon:
-                                            //     Icon(Icons.label_important_rounded),
-                                          ),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            "Dose",
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 20,
+                                          TextField(
+                                            controller: nameTextController,
+                                            decoration: InputDecoration(
+                                              hintText: 'Name',
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              // prefixIcon:
+                                              //     Icon(Icons.label_important_rounded),
                                             ),
                                           ),
-                                        ),
-                                        TextField(
-                                          controller: doseTextController,
-                                          decoration: InputDecoration(
-                                            hintText: 'Dose',
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            // prefixIcon:
-                                            //     Icon(Icons.label_important_rounded),
-                                          ),
-                                        ),
-                                        SizedBox(height: 10),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            "Note",
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontSize: 20,
+                                          SizedBox(height: 10),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "Dose",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 20,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        TextField(
-                                          maxLines: 2,
-                                          controller: noteTextController,
-                                          decoration: InputDecoration(
-                                            hintText: 'Note',
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
+                                          TextField(
+                                            controller: doseTextController,
+                                            decoration: InputDecoration(
+                                              hintText: 'Dose',
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              // prefixIcon:
+                                              //     Icon(Icons.label_important_rounded),
                                             ),
-                                            // prefixIcon:
-                                            //     Icon(Icons.label_important_rounded),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            this.setState(() {
-                                              listPill.add({
-                                                'name': nameTextController.text,
-                                                'dose': doseTextController.text,
-                                                'note': noteTextController.text,
-                                                'pillColor':
-                                                    pillColors[pillColorIdx]
-                                                        ['pillColor'],
-                                                'color':
-                                                    pillColors[pillColorIdx]
-                                                        ['color'],
+                                          SizedBox(height: 10),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "Note",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ),
+                                          TextField(
+                                            maxLines: 2,
+                                            controller: noteTextController,
+                                            decoration: InputDecoration(
+                                              hintText: 'Note',
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              // prefixIcon:
+                                              //     Icon(Icons.label_important_rounded),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              this.setState(() {
+                                                widget.listPill.add({
+                                                  'name':
+                                                      nameTextController.text,
+                                                  'dose':
+                                                      doseTextController.text,
+                                                  'note':
+                                                      noteTextController.text,
+                                                  'pillColor': widget
+                                                              .pillColors[
+                                                          widget.pillColorIdx]
+                                                      ['pillColor'],
+                                                  'color': widget.pillColors[
+                                                          widget.pillColorIdx]
+                                                      ['color'],
+                                                });
                                               });
-                                            });
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text("Add",
-                                              style: TextStyle(fontSize: 20)),
-                                          style: ElevatedButton.styleFrom(
-                                            primary:
-                                                Theme.of(context).primaryColor,
-                                            minimumSize: Size.fromHeight(50),
-                                          ),
-                                        )
-                                      ],
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("Add",
+                                                style: TextStyle(fontSize: 20)),
+                                            style: ElevatedButton.styleFrom(
+                                              primary: Theme.of(context)
+                                                  .primaryColor,
+                                              minimumSize: Size.fromHeight(50),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              },
-                          icon: Icon(Icons.add)),
+                                },
+                            icon: Icon(Icons.add)),
                     ],
                   ),
                   Column(
-                    children: listPill
+                    children: widget.listPill
                         .map((e) => pillItem(
                             context,
                             e['name'],
@@ -306,14 +338,16 @@ class _AppointmentPageState extends State<AppointmentPage> {
                             e['note'],
                             e['pillColor'],
                             e['color'],
+                            authController.isDoctor,
                             () => this.setState(() {
-                                  listPill.remove(e);
+                                  widget.listPill.remove(e);
                                 })))
                         .toList(),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
+                      controller: diseaseTextController,
                       autofocus: false,
                       maxLines: 5,
                       decoration: InputDecoration(
@@ -326,18 +360,19 @@ class _AppointmentPageState extends State<AppointmentPage> {
                               borderSide: BorderSide(color: Colors.blue))),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () => update(),
-                    child: Text(
-                      "Confirm",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        minimumSize:
-                            Size(MediaQuery.of(context).size.width * 0.9, 60),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                  )
+                  if (authController.isDoctor)
+                    ElevatedButton(
+                      onPressed: () => update(),
+                      child: Text(
+                        "Confirm",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                          minimumSize:
+                              Size(MediaQuery.of(context).size.width * 0.9, 60),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                    )
                 ],
               )
             ],
@@ -347,7 +382,8 @@ class _AppointmentPageState extends State<AppointmentPage> {
     );
   }
 
-  var pillItem = (context, name, dose, note, pillColor, color, onClosed) {
+  var pillItem =
+      (context, name, dose, note, pillColor, color, canClose, onClosed) {
     return Container(
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.all(10),
@@ -403,10 +439,11 @@ class _AppointmentPageState extends State<AppointmentPage> {
             ),
           ),
           Spacer(),
-          IconButton(
-            icon: Icon(Icons.close),
-            onPressed: onClosed,
-          ),
+          if (canClose)
+            IconButton(
+              icon: Icon(Icons.close),
+              onPressed: onClosed,
+            ),
         ],
       ),
     );

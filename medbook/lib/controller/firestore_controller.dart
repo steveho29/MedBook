@@ -57,7 +57,8 @@ class FirestoreController extends GetxController {
         // .get()
         // .then((value) => print(value));
         .update({
-      'prescription': appointment.prescriptions.map((e) => e.toJson()).toList()
+      'prescription': appointment.prescriptions.map((e) => e.toJson()).toList(),
+      'reason': appointment.reason,
     });
   }
 

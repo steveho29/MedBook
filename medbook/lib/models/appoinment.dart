@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:medbook/models/prescription.dart';
 
 class Appointment {
-  final String userId, doctorId, reason, status, id;
+  final String userId, doctorId, status, id;
+  String reason;
   final Timestamp time;
   List<Presciption> prescriptions = [];
   Appointment(
@@ -25,6 +26,7 @@ class Appointment {
                     name: e['name'], dose: e['dose'], note: e['note']);
               }).toList()
             : [],
+        // nextDay = json.containsKey('nextDay') ? json['nextDay'].toString() : '',
         id = json['id'];
 
   Map<String, dynamic> toJson() => {

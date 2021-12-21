@@ -37,6 +37,7 @@ class AuthController extends GetxController {
 
   userChanges(User? user) {
     print("User changes");
+    checkUserIsDoctor();
   }
 
   void googleLogin() async {

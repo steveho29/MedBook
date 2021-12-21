@@ -9,6 +9,7 @@ import 'package:medbook/controller/auth_controller.dart';
 import 'package:medbook/controller/firestore_controller.dart';
 import 'package:medbook/models/appoinment.dart';
 import 'package:medbook/models/doctor.dart';
+import 'package:medbook/view/screens/appointment_detail_page.dart';
 import 'package:medbook/view/widgets/news_card.dart';
 
 class ActivityPage extends StatefulWidget {
@@ -49,7 +50,7 @@ class _ActivityPageState extends State<ActivityPage> {
     });
   }
 
-  List<Container> get listAppointmentItem {
+  List<GestureDetector> get listAppointmentItem {
     var data = x.values.toList();
     data.sort((a, b) => a.time.compareTo(b.time));
 
@@ -148,49 +149,97 @@ class _ActivityPageState extends State<ActivityPage> {
   }
 }
 
-var AppointmentItem = (Appointment p, Doctor? d) => Container(
-      margin: EdgeInsets.only(bottom: 10),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey,
-              offset: Offset(0, 1),
-              blurRadius: 5,
+var AppointmentItem = (Appointment p, Doctor? d) => GestureDetector(
+  onTap: () => Get.to(() => AppointmentPage(appointment: p)),
+  child:   Container(
+  
+        margin: EdgeInsets.only(bottom: 10),
+  
+        padding: EdgeInsets.all(20),
+  
+        decoration: BoxDecoration(
+  
+            borderRadius: BorderRadius.circular(20),
+  
+            color: Colors.white,
+  
+            boxShadow: [
+  
+              BoxShadow(
+  
+                color: Colors.grey,
+  
+                offset: Offset(0, 1),
+  
+                blurRadius: 5,
+  
+              ),
+  
+            ]),
+  
+        child: Row(
+  
+          children: [
+  
+            Padding(
+  
+              padding: const EdgeInsets.only(right: 10),
+  
+              child: FaIcon(FontAwesomeIcons.bookMedical),
+  
             ),
-          ]),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: FaIcon(FontAwesomeIcons.bookMedical),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(d != null ? d.name : "", style: TextStyle(fontSize: 15)),
-              Text(
-                DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY)
-                    .format(p.time.toDate()),
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
+  
+            Column(
+  
+              crossAxisAlignment: CrossAxisAlignment.start,
+  
+              children: [
+  
+                Text(d != null ? d.name : "", style: TextStyle(fontSize: 15)),
+  
+                Text(
+  
+                  DateFormat(DateFormat.YEAR_MONTH_WEEKDAY_DAY)
+  
+                      .format(p.time.toDate()),
+  
+                  style: TextStyle(
+  
+                    fontWeight: FontWeight.bold,
+  
+                    fontSize: 15,
+  
+                  ),
+  
                 ),
-              ),
-            ],
-          ),
-          Spacer(),
-          Badge(
-            badgeColor: p.status == "Incoming" ? Colors.blue : Colors.red,
-            child: Text(
-              p.status,
-              style: TextStyle(
-                color: p.status == "Incoming" ? Colors.green : Colors.grey,
-              ),
+  
+              ],
+  
             ),
-          )
-        ],
+  
+            Spacer(),
+  
+            Badge(
+  
+              badgeColor: p.status == "Incoming" ? Colors.blue : Colors.red,
+  
+              child: Text(
+  
+                p.status,
+  
+                style: TextStyle(
+  
+                  color: p.status == "Incoming" ? Colors.green : Colors.grey,
+  
+                ),
+  
+              ),
+  
+            )
+  
+          ],
+  
+        ),
+  
       ),
-    );
+);
