@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
+import 'package:medbook/controller/main_controller.dart';
+import 'package:medbook/view/screens/home_page.dart';
 
 import 'main_page.dart';
 
@@ -16,36 +19,36 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
+  MainPageController mainPageController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => Get.to(() => MainPage()),
-            icon: Icon(
-              Icons.close,
-              color: Colors.black,
-            )),
-        title: Container(
-          child: Text(
-            widget.title,
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 5,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 5),
           child: Column(
             children: [
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.close)),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    child: Text(
+                      widget.title,
+                      maxLines: 15,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Html(data: widget.content)
+
               // Text(widget.content, style: TextStyle(
               //   fontSize: 15
               // ),
